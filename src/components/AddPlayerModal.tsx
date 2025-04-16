@@ -96,21 +96,4 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 600,
     },
-    closeButton: {
-        width: 30,
-        height: 30,
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        backgroundColor: BORDER_LIGHT_GREY,
-        borderTopRightRadius: 10,
-        borderBottomLeftRadius: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    closeText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: 'white',
-    },
 });

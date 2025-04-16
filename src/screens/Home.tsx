@@ -1,19 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { AddPlayerModal } from "../components/AddPlayerModal";
 import { ButtonText } from "../components/ButtonText";
 import { RowContainer } from "../components/RowContainer";
 import { getAllPlayers } from "../services/player";
 import { Player } from "../model/player";
 import { InfoPreviewBlock } from "../components/InfoPreviewBlock";
+import { Menu } from "../components/Menu";
+
+type RootStackParamList = {
+    Home: undefined;
+    NewGame: undefined;
+};
 
 export const Home = () => {
-    const [modalVisible, setModalVisible] = useState(false);
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+    const [playerModalVisible, setPlayerModalVisible] = useState(false);
+    const [menuVisible, setMenuVisible] = useState(false);
     const [playerName, setPlayerName] = useState('');
     const [players, setPlayers] = useState<Player[]>([]);
 
     const openAddPlayerModal = () => {
-        setModalVisible(true)
+        setPlayerModalVisible(true);
+    };
+
+    const openMenu = () => {
+        setMenuVisible(true);
+    };
+
+    const moveToGameScreen = () => {
+        navigation.navigate('NewGame');
     };
 
     // use useEffect to do something after component mounts (ex. fetch data)
@@ -37,28 +56,46 @@ export const Home = () => {
                 )}/>
             </View>
             <AddPlayerModal 
-                modalVisible={modalVisible}
+                modalVisible={playerModalVisible}
                 playerName={playerName}
                 setPlayerName={setPlayerName}
-                setModalVisible={setModalVisible}
+                setModalVisible={setPlayerModalVisible}
             />
 
-            <TouchableOpacity style={styles.addPlayerButton} onPress={openAddPlayerModal}>
-                <ButtonText text="+"/>
-            </TouchableOpacity>
+            <View style={styles.actionsView}>
+                {menuVisible && (
+                    <TouchableWithoutFeedback onPress={() => setMenuVisible(false)}>
+                        <View style={styles.overlay}>
+                            <View style={styles.menuView}>
+                                <Menu
+                                    newGamePress={moveToGameScreen}
+                                    addPlayersPress={openAddPlayerModal}
+                                />
+                            </View>
+                        </View>
+                    </TouchableWithoutFeedback>
+                )}
+                
+                <TouchableOpacity style={styles.newItemButton} onPress={openMenu}>
+                    <ButtonText text="+"/>
+                </TouchableOpacity>
+            </View>
+
+            
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: 'white',
         flex: 1,
     },
     rowsContainer: {
         flex: 1,
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
-    addPlayerButton: {
+    newItemButton: {
         position: 'absolute',
         bottom: 30,
         right: 30,
@@ -68,5 +105,29 @@ const styles = StyleSheet.create({
         backgroundColor: 'pink',
         justifyContent: 'center',
         alignItems: 'center', 
+    },
+    actionsView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center', 
+    },
+    overlay: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: 'rgba(0,0,0,0)', // transparent touch area
+        zIndex: 10,
+    },
+    menuView: {
+        position: 'absolute',
+        bottom: 100, // adjust based on how far above the button you want it
+        right: 30,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        paddingBottom: 10,
+        elevation: 5,
+        zIndex: 10,
     }
 });
