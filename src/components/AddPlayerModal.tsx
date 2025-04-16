@@ -37,7 +37,6 @@ export const AddPlayerModal = (props: AddPlayerModalProps) => {
         await createPlayerDocument(newPlayer);
         setPlayerName('');
         setModalVisible(false); // later i could change this to some onError/onSuccess condition
-        getAllPlayers();
     };
 
     return (

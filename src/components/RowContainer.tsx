@@ -23,8 +23,10 @@ export const RowContainer = <T,>(props: RowContainerProps<T>) => {
 
             <Spacing vertical={10} />
 
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.list} horizontal={true}>
-                {content.map(item => renderItem(item))}
+            <ScrollView style={styles.scrollView} horizontal={true} showsHorizontalScrollIndicator={false}>
+                <View style={styles.list}>
+                    {content.map(item => renderItem(item))}
+                </View>
             </ScrollView>
         </View>
     );
@@ -48,7 +50,9 @@ const styles = StyleSheet.create({
     },
     scrollView: {},
     list: {
+        flexWrap: 'wrap',
         flexDirection: 'row',
-        width: '100%',
+        alignItems: 'flex-start',
+        flex: 1,
     },
 });
