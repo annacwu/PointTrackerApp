@@ -25,8 +25,8 @@ export type Game = {
     active: boolean;
     tags: Tag[]
 
-    dateStarted: Date;
-    dateEnded: Date;
+    dateStarted: number;
+    dateEnded: number;
 };
 
 export enum POINT_TYPES {

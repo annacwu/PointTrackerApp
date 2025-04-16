@@ -1,11 +1,14 @@
 import React from "react";
-import { Modal, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Modal, View, Text, StyleSheet } from "react-native";
 import { InputData } from "./InputData";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BORDER_LIGHT_GREY } from "../utils/colors";
 import { CloseButton } from "./CloseButton";
 import { SubmitButton } from "./SubmitButton";
 import { ButtonText } from "./ButtonText";
+import { FIREBASE_COLLECTIONS, generateFirebaseId } from "../firestore/utils";
+import { Player } from "../model/player";
+import { createPlayerDocument, getAllPlayers } from "../services/player";
 
 type AddPlayerModalProps = {
     modalVisible: boolean;
@@ -21,8 +24,20 @@ export const AddPlayerModal = (props: AddPlayerModalProps) => {
         setModalVisible(false);
     };
 
-    const addPlayer = () => {
-        
+    const addPlayer = async () => {
+        const id = generateFirebaseId(FIREBASE_COLLECTIONS.PLAYER);
+
+        const newPlayer: Player = {
+            id,
+            name: playerName,
+            wins: 0,
+            createdDate: Date.now(),
+        };
+
+        await createPlayerDocument(newPlayer);
+        setPlayerName('');
+        setModalVisible(false); // later i could change this to some onError/onSuccess condition
+        getAllPlayers();
     };
 
     return (
@@ -68,7 +83,6 @@ const styles = StyleSheet.create({
         height: 180,
         width: 300,
         padding: 10,
-        // alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -100,7 +114,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white',
     },
-    doneButton: {
-
-    }
 });

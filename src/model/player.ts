@@ -5,8 +5,9 @@ export type Player = {
     id: string;
     name: string;
     wins: number;
-    bestGame: Game;
-    favGame: Game;
-    bestTag: Tag;
-    mostLikelyWin: Tag;
+    bestGame?: Game;
+    favGame?: Game;
+    bestTag?: Tag;
+    mostLikelyWin?: Tag;
+    createdDate: number;
 };
