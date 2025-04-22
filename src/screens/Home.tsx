@@ -5,10 +5,9 @@ import { StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } fr
 import { AddPlayerModal } from "../components/AddPlayerModal";
 import { ButtonText } from "../components/ButtonText";
 import { RowContainer } from "../components/RowContainer";
-import { getAllPlayers } from "../services/player";
-import { Player } from "../model/player";
 import { InfoPreviewBlock } from "../components/InfoPreviewBlock";
 import { Menu } from "../components/Menu";
+import { useGameContext } from "../contexts/GameContext";
 
 type RootStackParamList = {
     Home: undefined;
@@ -17,11 +16,11 @@ type RootStackParamList = {
 
 export const Home = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const { allPlayers, refreshPlayers } = useGameContext();
 
     const [playerModalVisible, setPlayerModalVisible] = useState(false);
     const [menuVisible, setMenuVisible] = useState(false);
     const [playerName, setPlayerName] = useState('');
-    const [players, setPlayers] = useState<Player[]>([]);
 
     const openAddPlayerModal = () => {
         setPlayerModalVisible(true);
@@ -32,25 +31,21 @@ export const Home = () => {
     };
 
     const moveToGameScreen = () => {
+        setMenuVisible(false);
         navigation.navigate('NewGame');
     };
 
     // use useEffect to do something after component mounts (ex. fetch data)
     // reruns every time playerName changes so that it will get the new ones added
     useEffect(() => { 
-        const fetchPlayers = async () => {
-            const allPlayers = await getAllPlayers();
-            setPlayers(allPlayers);
-        };
-
-        fetchPlayers();
+        refreshPlayers();
     }, [playerName]);
 
     return (
         <View style={styles.container}>
             <View style={styles.rowsContainer}>
                 <RowContainer label={'Players'} 
-                content={players}
+                content={allPlayers}
                 renderItem={(player) => (
                     <InfoPreviewBlock key={player.id} child={<Text>{player.name}</Text>} />
                 )}/>

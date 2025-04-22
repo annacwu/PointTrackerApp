@@ -41,5 +41,7 @@ const styles = StyleSheet.create({
         height: 45,
         width: '100%',
         paddingHorizontal: 10,
+        marginTop: 10,
+        marginBottom: 10,
     }
 });

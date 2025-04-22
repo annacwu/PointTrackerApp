@@ -9,4 +9,5 @@ export const generateFirebaseId = (path: string) => {
 export enum FIREBASE_COLLECTIONS {
     PLAYER = 'player',
     GAME = 'game',
+    FOLDER = 'folder',
 };

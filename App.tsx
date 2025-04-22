@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Home } from './src/screens/Home';
 import { NewGame } from './src/screens/NewGame';
+import { GameProvider } from './src/contexts/GameContext';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,13 +19,16 @@ const RootStack = () => {
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.container} edges={['top']}>
-        <NavigationContainer>
-          <RootStack />
-        </NavigationContainer>
-      </SafeAreaView>
-    </SafeAreaProvider>
+    <GameProvider>
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.container} edges={['top']}>
+          <NavigationContainer>
+            <RootStack />
+          </NavigationContainer>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </GameProvider>
+
   );
 }
 
