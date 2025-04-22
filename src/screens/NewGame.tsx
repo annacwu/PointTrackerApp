@@ -9,6 +9,7 @@ import { useGameContext } from "../contexts/GameContext";
 import { Spacing } from "../components/Spacing";
 import { AddPlayerModal } from "../components/AddPlayerModal";
 import { AddFolderModal } from "../components/AddFolderModal";
+import SingleDropdown from "../components/SingleDropdown";
 
 
 export const NewGame = () => {
@@ -95,9 +96,18 @@ export const NewGame = () => {
                 </TouchableOpacity> 
             </View>
             {/* TODO: this should actually be a single dropdown not multi*/}
-            <MultiDropdown itemName= "folder" data={folderOptions} />
+            <SingleDropdown itemName= "folder" data={folderOptions} />
             
+            <Spacing vertical={5} />
+            <View style={styles.horizontal}>
+                <Text style={styles.label}>Tags</Text>
+                <Spacing horizontal={5} />
+                <TouchableOpacity style={styles.plusButton} onPress={openAddFolderModal}>
+                    <Text style={{fontSize: 16}}>+</Text>
+                </TouchableOpacity> 
+            </View>
 
+            <Text style={styles.label}>Point Type</Text>
 
             <SubmitButton child={<ButtonText text={'Create Game'}/>} onPress={addGame} />
 
