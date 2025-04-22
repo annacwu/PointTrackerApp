@@ -11,4 +11,3 @@ export const getAllFolders = async () => {
     const resp = await getAllDocumentsWithPath(FIREBASE_COLLECTIONS.FOLDER);
     return resp as Folder[];
 };
-

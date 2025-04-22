@@ -6,33 +6,35 @@ import { CloseButton } from "./CloseButton";
 import { SubmitButton } from "./SubmitButton";
 import { ButtonText } from "./ButtonText";
 import { FIREBASE_COLLECTIONS, generateFirebaseId } from "../firestore/utils";
-import { Folder } from "../model/folder";
-import { createFolderDocument } from "../services/folder";
+import { Tag } from "../model/tag";
+import { createTagDocument } from "../services/tag";
+import { ColorsInput } from "./ColorsInput";
 
-type AddFolderModalProps = {
+type AddTagModalProps = {
     modalVisible: boolean;
     setModalVisible: (visible: boolean) => void;
 };
 
-export const AddFolderModal = (props: AddFolderModalProps) => {
+export const AddTagModal = (props: AddTagModalProps) => {
     const { modalVisible, setModalVisible } = props;
-    const [folderName, setFolderName] = useState('');
+    const [tagName, setTagName] = useState('');
+    const [tagColor, setTagColor] = useState('');
 
     const closeModal = () => {
         setModalVisible(false);
     };
 
-    const addFolder = async () => {
-        const id = generateFirebaseId(FIREBASE_COLLECTIONS.FOLDER);
+    const addTag = async () => {
+        const id = generateFirebaseId(FIREBASE_COLLECTIONS.TAG);
 
-        const newFolder: Folder = {
+        const newTag: Tag = {
             id,
-            name: folderName,
-            games: [],
+            name: tagName,
+            color: tagColor,
         };
 
-        await createFolderDocument(newFolder);
-        setFolderName('');
+        await createTagDocument(newTag);
+        setTagName('');
         setModalVisible(false); // later i could change this to some onError/onSuccess condition
     };
 
@@ -47,16 +49,19 @@ export const AddFolderModal = (props: AddFolderModalProps) => {
                     <View style={styles.content}>
                         <CloseButton onPress={closeModal}/>
 
-                        <Text style={styles.label}> Folder Name: </Text>
+                        <Text style={styles.label}> Tag Name: </Text>
 
                         <InputData 
-                        value={folderName}
-                        onChangeText={(text) => setFolderName(text)}
+                        value={tagName}
+                        onChangeText={(text) => setTagName(text)}
                         autoCapitalize="none"
                         autoCorrect={false}
                         />
 
-                       <SubmitButton child={<ButtonText text={'Add Folder'}/>} onPress={addFolder} /> 
+                        <Text style={styles.label}> Tag Color: </Text>
+                        <ColorsInput itemColor={tagColor} setItemColor={setTagColor} />
+
+                       <SubmitButton child={<ButtonText text={'Add Tag'}/>} onPress={addTag} /> 
                     </View>
                 </View>
                 
@@ -76,7 +81,7 @@ const styles = StyleSheet.create({
         margin: 20,
         backgroundColor: 'white',
         borderRadius: 20,
-        height: 180,
+        height: 280,
         width: 300,
         padding: 10,
         shadowColor: '#000',

@@ -4,12 +4,15 @@ import { GameContextType } from "../model/gameContext";
 import { getAllPlayers } from "../services/player";
 import { Folder } from "../model/folder";
 import { getAllFolders } from "../services/folder";
+import { Tag } from "../model/tag";
+import { getAllTags } from "../services/tag";
 
 export const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const GameProvider = ({children}: { children: React.ReactNode }) => {
     const [allPlayers, setPlayers] = useState<Player[]>([]);
     const [allFolders, setFolders] = useState<Folder[]>([]);
+    const [allTags, setTags] = useState<Tag[]>([]);
 
     // TODO: add proper error handling to this guy
     const fetchPlayers = async () => {
@@ -22,13 +25,19 @@ export const GameProvider = ({children}: { children: React.ReactNode }) => {
         setFolders(folders);
     }
 
+    const fetchTags = async () => {
+        const tags = await getAllTags();
+        setTags(tags);
+    }
+
     useEffect(() => {
         fetchPlayers();
         fetchFolders();
+        fetchTags();
     }, []);
 
     return (
-        <GameContext.Provider value={{ allPlayers, refreshPlayers: fetchPlayers, allFolders, refreshFolders: fetchFolders }} >
+        <GameContext.Provider value={{ allPlayers, refreshPlayers: fetchPlayers, allFolders, refreshFolders: fetchFolders, allTags, refreshTags: fetchTags }} >
             {children}
         </GameContext.Provider>
     );

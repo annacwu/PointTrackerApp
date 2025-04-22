@@ -20,7 +20,6 @@ export const Home = () => {
 
     const [playerModalVisible, setPlayerModalVisible] = useState(false);
     const [menuVisible, setMenuVisible] = useState(false);
-    const [playerName, setPlayerName] = useState('');
 
     const openAddPlayerModal = () => {
         setPlayerModalVisible(true);
@@ -39,7 +38,7 @@ export const Home = () => {
     // reruns every time playerName changes so that it will get the new ones added
     useEffect(() => { 
         refreshPlayers();
-    }, [playerName]);
+    }, [playerModalVisible]);
 
     return (
         <View style={styles.container}>
@@ -52,12 +51,9 @@ export const Home = () => {
             </View>
             <AddPlayerModal 
                 modalVisible={playerModalVisible}
-                playerName={playerName}
-                setPlayerName={setPlayerName}
                 setModalVisible={setPlayerModalVisible}
             />
 
-            <View style={styles.actionsView}>
                 {menuVisible && (
                     <TouchableWithoutFeedback onPress={() => setMenuVisible(false)}>
                         <View style={styles.overlay}>
@@ -74,7 +70,6 @@ export const Home = () => {
                 <TouchableOpacity style={styles.newItemButton} onPress={openMenu}>
                     <ButtonText text="+"/>
                 </TouchableOpacity>
-            </View>
 
             
         </View>
@@ -101,11 +96,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center', 
     },
-    actionsView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center', 
-    },
+    // actionsView: {
+    //     backgroundColor: 'red',
+    //     flex: 1,
+    //     justifyContent: 'center',
+    //     alignItems: 'center', 
+    // },
     overlay: {
         position: 'absolute',
         top: 0,

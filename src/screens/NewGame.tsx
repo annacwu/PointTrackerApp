@@ -10,35 +10,44 @@ import { Spacing } from "../components/Spacing";
 import { AddPlayerModal } from "../components/AddPlayerModal";
 import { AddFolderModal } from "../components/AddFolderModal";
 import SingleDropdown from "../components/SingleDropdown";
+import { AddTagModal } from "../components/AddTagModal";
 
 
 export const NewGame = () => {
-    const { allPlayers, refreshPlayers, allFolders, refreshFolders } = useGameContext();
+    const { allPlayers, refreshPlayers, allFolders, refreshFolders, allTags, refreshTags } = useGameContext();
     const [gameName, setGameName] = useState('');
     const [playerModalVisible, setPlayerModalVisible] = useState(false);
-    const [playerName, setPlayerName] = useState('');
     const [folderModalVisible, setFolderModalVisible] = useState(false);
-    const [folderName, setFolderName] = useState('');
+    const [tagModalVisible, setTagModalVisible] = useState(false);
 
     // useEffects so that the new items are available right after added
     useEffect(() => { 
         refreshPlayers();
-    }, [playerName]);
+    }, [playerModalVisible]);
 
     useEffect(() => {
         refreshFolders();
-    }, [folderName]);
+    }, [folderModalVisible]);
+
+    useEffect(() => {
+        refreshTags();
+    }, [tagModalVisible]);
 
     // turn into data to be shown in the dropdown
     const playerOptions: DropdownOption[] = allPlayers.map(player => ({
         label: player.name,
         value: player.id,
-    })) 
+    }));
 
     const folderOptions: DropdownOption[] = allFolders.map(folder => ({
         label: folder.name,
         value: folder.id,
-    }))
+    }));
+
+    const tagOptions: DropdownOption[] = allTags.map(tag => ({
+        label: tag.name,
+        value: tag.id,
+    }));
 
     const addGame = () => {
 
@@ -52,20 +61,25 @@ export const NewGame = () => {
         setFolderModalVisible(true);
     };
 
+    const openAddTagModal = () => {
+        setTagModalVisible(true);
+    };
+
     return (
         <View style={styles.container}>
             <AddPlayerModal 
                 modalVisible={playerModalVisible}
-                playerName={playerName}
-                setPlayerName={setPlayerName}
                 setModalVisible={setPlayerModalVisible}
             />
 
             <AddFolderModal 
                 modalVisible={folderModalVisible}
-                folderName={folderName}
-                setFolderName={setFolderName}
                 setModalVisible={setFolderModalVisible}
+            />
+
+            <AddTagModal 
+                modalVisible={tagModalVisible}
+                setModalVisible={setTagModalVisible}
             />
 
             <Spacing vertical={5} />
@@ -102,10 +116,11 @@ export const NewGame = () => {
             <View style={styles.horizontal}>
                 <Text style={styles.label}>Tags</Text>
                 <Spacing horizontal={5} />
-                <TouchableOpacity style={styles.plusButton} onPress={openAddFolderModal}>
+                <TouchableOpacity style={styles.plusButton} onPress={openAddTagModal}>
                     <Text style={{fontSize: 16}}>+</Text>
                 </TouchableOpacity> 
             </View>
+            <MultiDropdown itemName= "tags" data={tagOptions} />
 
             <Text style={styles.label}>Point Type</Text>
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Modal, View, Text, StyleSheet } from "react-native";
 import { InputData } from "./InputData";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,13 +12,12 @@ import { createPlayerDocument, getAllPlayers } from "../services/player";
 
 type AddPlayerModalProps = {
     modalVisible: boolean;
-    playerName: string;
-    setPlayerName: (name: string) => void; 
     setModalVisible: (visible: boolean) => void;
 };
 
 export const AddPlayerModal = (props: AddPlayerModalProps) => {
-    const { modalVisible, playerName, setPlayerName, setModalVisible } = props;
+    const { modalVisible, setModalVisible } = props;
+    const [playerName, setPlayerName] = useState('');
 
     const closeModal = () => {
         setModalVisible(false);
