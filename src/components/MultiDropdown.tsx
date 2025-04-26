@@ -6,8 +6,7 @@ import { MultiDropdownProps } from '../model/dropdown';
 
 
 const MultiDropdown = (props: MultiDropdownProps) => {
-  const { itemName, data } = props;
-  const [selected, setSelected] = useState<string[]>([]);
+  const { itemName, data, selected, setSelected } = props;
 
   return (
     <View style={styles.container}>

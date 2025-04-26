@@ -21,12 +21,12 @@ export type Game = {
     name: string;
     players: GamePlayer[]
     rounds: Round[]
-    pointType: POINT_TYPES;
+    pointType: string;
     active: boolean;
     tags: Tag[]
 
     dateStarted: number;
-    dateEnded: number;
+    dateEnded?: number;
 };
 
 export enum POINT_TYPES {

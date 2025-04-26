@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { InputData } from "../components/InputData";
 import { SubmitButton } from "../components/SubmitButton";
 import { ButtonText } from "../components/ButtonText";
@@ -11,6 +11,12 @@ import { AddPlayerModal } from "../components/AddPlayerModal";
 import { AddFolderModal } from "../components/AddFolderModal";
 import SingleDropdown from "../components/SingleDropdown";
 import { AddTagModal } from "../components/AddTagModal";
+import { FIREBASE_COLLECTIONS, generateFirebaseId } from "../firestore/utils";
+import ButtonMultiselect, { ButtonLayout } from "react-native-button-multiselect";
+import { Game, GamePlayer, POINT_TYPES } from "../model/game";
+import { Player } from "../model/player";
+import { Tag } from "../model/tag";
+import { Folder } from "../model/folder";
 
 
 export const NewGame = () => {
@@ -19,6 +25,11 @@ export const NewGame = () => {
     const [playerModalVisible, setPlayerModalVisible] = useState(false);
     const [folderModalVisible, setFolderModalVisible] = useState(false);
     const [tagModalVisible, setTagModalVisible] = useState(false);
+    const [pointType, setPointType] = useState('');
+
+    const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([]);
+    const [selectedFolder, setSelectedFolder] = useState<Folder>();
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
     // useEffects so that the new items are available right after added
     useEffect(() => { 
@@ -49,8 +60,33 @@ export const NewGame = () => {
         value: tag.id,
     }));
 
-    const addGame = () => {
+    const handleButtonSelected = (selectedValues: string) => {
+        setPointType(selectedValues);
+    };
 
+    const addGame = () => {
+        const gamePlayers: GamePlayer[] = selectedPlayers.map(player => ({
+            id: player.id,
+            totalPoints: 0,
+            roundPoints: 0,
+        })) 
+
+        const newGame: Game = {
+            id: generateFirebaseId(FIREBASE_COLLECTIONS.GAME),
+            name: gameName,
+            players: gamePlayers,
+            rounds: [],
+            active: true,
+            pointType: pointType,
+            tags: selectedTags,
+            dateStarted: Date.now(),
+        }
+        console.log(newGame)
+        
+        if (selectedFolder) {
+            selectedFolder.games.push(newGame);
+            console.log(`game added to ${selectedFolder}`);
+        };
     };
 
     const openAddPlayerModal = () => {
@@ -67,65 +103,76 @@ export const NewGame = () => {
 
     return (
         <View style={styles.container}>
-            <AddPlayerModal 
+            <ScrollView style={styles.scrollView}>
+                <AddPlayerModal 
                 modalVisible={playerModalVisible}
                 setModalVisible={setPlayerModalVisible}
-            />
+                />
 
-            <AddFolderModal 
-                modalVisible={folderModalVisible}
-                setModalVisible={setFolderModalVisible}
-            />
+                <AddFolderModal 
+                    modalVisible={folderModalVisible}
+                    setModalVisible={setFolderModalVisible}
+                />
 
-            <AddTagModal 
-                modalVisible={tagModalVisible}
-                setModalVisible={setTagModalVisible}
-            />
+                <AddTagModal 
+                    modalVisible={tagModalVisible}
+                    setModalVisible={setTagModalVisible}
+                />
 
-            <Spacing vertical={5} />
-            <Text style={styles.label}>Game Name</Text>
-            <InputData 
-                value={gameName}
-                onChangeText={(text) => setGameName(text)}
-                autoCapitalize="none"
-                autoCorrect={false}
-            />
+                <Spacing vertical={5} />
+                <Text style={styles.label}>Game Name</Text>
+                <InputData 
+                    value={gameName}
+                    onChangeText={(text) => setGameName(text)}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                />
 
-            <Spacing vertical={5} />
-            <View style={styles.horizontal}>
-                <Text style={styles.label}>Players</Text>
-                <Spacing horizontal={5} />
-                <TouchableOpacity style={styles.plusButton} onPress={openAddPlayerModal}>
-                    <Text style={{fontSize: 16}}>+</Text>
-                </TouchableOpacity> 
-            </View>
-            <MultiDropdown itemName= "players" data={playerOptions} />
+                <Spacing vertical={5} />
+                <View style={styles.horizontal}>
+                    <Text style={styles.label}>Players</Text>
+                    <Spacing horizontal={5} />
+                    <TouchableOpacity style={styles.plusButton} onPress={openAddPlayerModal}>
+                        <Text style={{fontSize: 16}}>+</Text>
+                    </TouchableOpacity> 
+                </View>
+                <MultiDropdown itemName= "players" data={playerOptions} selected={selectedPlayers} setSelected={setSelectedPlayers} />
 
-            <Spacing vertical={5} />
-            <View style={styles.horizontal}>
-                <Text style={styles.label}>Folder</Text>
-                <Spacing horizontal={5} />
-                <TouchableOpacity style={styles.plusButton} onPress={openAddFolderModal}>
-                    <Text style={{fontSize: 16}}>+</Text>
-                </TouchableOpacity> 
-            </View>
-            {/* TODO: this should actually be a single dropdown not multi*/}
-            <SingleDropdown itemName= "folder" data={folderOptions} />
+                <Spacing vertical={5} />
+                <View style={styles.horizontal}>
+                    <Text style={styles.label}>Folder</Text>
+                    <Spacing horizontal={5} />
+                    <TouchableOpacity style={styles.plusButton} onPress={openAddFolderModal}>
+                        <Text style={{fontSize: 16}}>+</Text>
+                    </TouchableOpacity> 
+                </View>
+                <SingleDropdown itemName= "folder" data={folderOptions} selected={selectedFolder} setSelected={setSelectedFolder}/>
+                
+                <Spacing vertical={5} />
+                <View style={styles.horizontal}>
+                    <Text style={styles.label}>Tags</Text>
+                    <Spacing horizontal={5} />
+                    <TouchableOpacity style={styles.plusButton} onPress={openAddTagModal}>
+                        <Text style={{fontSize: 16}}>+</Text>
+                    </TouchableOpacity> 
+                </View>
+                <MultiDropdown itemName= "tags" data={tagOptions} selected={selectedTags} setSelected={setSelectedTags}/>
+
+                <Text style={styles.label}>Winner</Text>
+                <Spacing vertical={5} />
+                <ButtonMultiselect
+                    buttons={[{label: 'Most points', value: POINT_TYPES.MOST}, {label: 'Least points', value: POINT_TYPES.LEAST},]}
+                    layout={ButtonLayout.FULL_WIDTH}
+                    onButtonSelected={handleButtonSelected}
+                    selectedButtons={pointType}
+                />
+            </ScrollView>
+
+{/* TODO: make it so this button can't be selected if not all info filled in */}
+            <View style={styles.submit}>
+                <SubmitButton child={<ButtonText text={'Create Game'}/>} onPress={addGame} />
+            </View> 
             
-            <Spacing vertical={5} />
-            <View style={styles.horizontal}>
-                <Text style={styles.label}>Tags</Text>
-                <Spacing horizontal={5} />
-                <TouchableOpacity style={styles.plusButton} onPress={openAddTagModal}>
-                    <Text style={{fontSize: 16}}>+</Text>
-                </TouchableOpacity> 
-            </View>
-            <MultiDropdown itemName= "tags" data={tagOptions} />
-
-            <Text style={styles.label}>Point Type</Text>
-
-            <SubmitButton child={<ButtonText text={'Create Game'}/>} onPress={addGame} />
-
         </View>
     );
 };
@@ -135,6 +182,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
         padding: 10,
+    },
+    scrollView: {
+        flex: 1,
     },
     label: {
         fontSize: 16,
@@ -151,5 +201,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 5,
+    },
+    submit: {
+        bottom: 30,
     },
 });
