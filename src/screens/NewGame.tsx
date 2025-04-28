@@ -17,15 +17,19 @@ import { Game, GamePlayer, POINT_TYPES } from "../model/game";
 import { Player } from "../model/player";
 import { Tag } from "../model/tag";
 import { Folder } from "../model/folder";
-
+import { createGameDocument } from "../services/game";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../App";
 
 export const NewGame = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { allPlayers, refreshPlayers, allFolders, refreshFolders, allTags, refreshTags } = useGameContext();
     const [gameName, setGameName] = useState('');
     const [playerModalVisible, setPlayerModalVisible] = useState(false);
     const [folderModalVisible, setFolderModalVisible] = useState(false);
     const [tagModalVisible, setTagModalVisible] = useState(false);
-    const [pointType, setPointType] = useState('');
+    const [pointType, setPointType] = useState(POINT_TYPES.MOST);
 
     const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([]);
     const [selectedFolder, setSelectedFolder] = useState<Folder>();
@@ -47,29 +51,32 @@ export const NewGame = () => {
     // turn into data to be shown in the dropdown
     const playerOptions: DropdownOption[] = allPlayers.map(player => ({
         label: player.name,
-        value: player.id,
+        value: player,
     }));
 
     const folderOptions: DropdownOption[] = allFolders.map(folder => ({
         label: folder.name,
-        value: folder.id,
+        value: folder,
     }));
 
     const tagOptions: DropdownOption[] = allTags.map(tag => ({
         label: tag.name,
-        value: tag.id,
+        value: tag,
     }));
 
     const handleButtonSelected = (selectedValues: string) => {
-        setPointType(selectedValues);
+        setPointType(selectedValues as POINT_TYPES);
     };
 
-    const addGame = () => {
+// TODO: add error handling in this so people can't make empty games
+    const addGame = async () => {
         const gamePlayers: GamePlayer[] = selectedPlayers.map(player => ({
             id: player.id,
             totalPoints: 0,
             roundPoints: 0,
         })) 
+
+        console.log(`players: ${selectedPlayers}, folder: ${selectedFolder}, tags: ${selectedTags}`);
 
         const newGame: Game = {
             id: generateFirebaseId(FIREBASE_COLLECTIONS.GAME),
@@ -81,12 +88,18 @@ export const NewGame = () => {
             tags: selectedTags,
             dateStarted: Date.now(),
         }
-        console.log(newGame)
         
-        if (selectedFolder) {
+        if (selectedFolder !== undefined) {
             selectedFolder.games.push(newGame);
-            console.log(`game added to ${selectedFolder}`);
         };
+
+        await createGameDocument(newGame);
+        setSelectedPlayers([]);
+        setSelectedFolder(undefined);
+        setSelectedTags([]);
+        setPointType(POINT_TYPES.MOST);
+
+        navigation.navigate('Home');
     };
 
     const openAddPlayerModal = () => {

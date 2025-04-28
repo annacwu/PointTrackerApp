@@ -6,8 +6,7 @@ import { SingleDropdownProps } from '../model/dropdown';
 
 
 const SingleDropdown = (props: SingleDropdownProps) => {
-    const { itemName, data } = props
-    const [value, setValue] = useState(null);
+    const { itemName, data, selected, setSelected } = props;
 
     return (
         <Dropdown
@@ -23,9 +22,9 @@ const SingleDropdown = (props: SingleDropdownProps) => {
         valueField="value"
         placeholder={`Select ${itemName}`}
         searchPlaceholder="Search..."
-        value={value}
+        value={selected}
         onChange={item => {
-            setValue(item.value);
+            setSelected(item.value);
         }}
         renderLeftIcon={() => (
             <AntDesign style={styles.icon} color="black" name="Safety" size={20} />

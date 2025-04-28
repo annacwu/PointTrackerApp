@@ -21,7 +21,7 @@ export type Game = {
     name: string;
     players: GamePlayer[]
     rounds: Round[]
-    pointType: string;
+    pointType: POINT_TYPES;
     active: boolean;
     tags: Tag[]
 

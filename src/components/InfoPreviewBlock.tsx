@@ -3,14 +3,15 @@ import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
 
 type InfoPreviewBlockProps = {
     child: JSX.Element;
+    onPress: () => void;
 };
 
 export const InfoPreviewBlock = (props: InfoPreviewBlockProps) => {
-    const { child } = props;
+    const { child, onPress } = props;
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={onPress}>
                 {child}
             </TouchableOpacity>
         </View>

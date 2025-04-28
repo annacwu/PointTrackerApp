@@ -5,17 +5,28 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Home } from './src/screens/Home';
 import { NewGame } from './src/screens/NewGame';
 import { GameProvider } from './src/contexts/GameContext';
+import { ActiveGame } from './src/screens/ActiveGame';
+import { Game } from './src/model/game';
 
-const Stack = createNativeStackNavigator();
+export type RootStackParamList = {
+  Home: undefined;
+  NewGame: undefined;
+  ActiveGame: { game: Game };
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const RootStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
       <Stack.Screen name="NewGame" component={NewGame} options={{ title: "Create New Game"}}/>
+      <Stack.Screen name="ActiveGame" component={ActiveGame} options={{title: "Update Game"}} />
     </Stack.Navigator>
   );
 };
+
+
 
 export default function App() {
   return (
@@ -30,7 +41,7 @@ export default function App() {
     </GameProvider>
 
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

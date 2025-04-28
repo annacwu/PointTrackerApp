@@ -1,6 +1,10 @@
+import { Folder } from "./folder";
+import { Player } from "./player";
+import { Tag } from "./tag";
+
 export type DropdownOption = {
     label: string;
-    value: string;
+    value: Player | Folder | Tag;
 };
 
 export type SingleDropdownProps = {
