@@ -1,32 +1,41 @@
 import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, ViewStyle } from "react-native";
 import { Spacing } from "./Spacing";
 
 type RowContainerProps<T> = {
     label: string;
     content: T[];
     renderItem: (item: T) => React.ReactNode;
+    heading: boolean;
+    customStyles?: ViewStyle;
 }
 
 export const RowContainer = <T,>(props: RowContainerProps<T>) => {
-    const { label, content, renderItem } = props;
+    const { label, content, renderItem, heading, customStyles={} } = props;
+
+    const listStyles: ViewStyle = {
+        ...styles.list,
+        ...customStyles,
+    };
 
     return (
         <View style={styles.container}>
-            <View style={styles.heading}>
+            {heading && (
+                <View style={styles.heading}>
                 <Spacing horizontal={5} />
                 <Text style={styles.label}>{label}</Text>
                 <Spacing horizontal={5} />
                 <TouchableOpacity>
-                    <Text>see all</Text>
+                    <Text>See All</Text>
                 </TouchableOpacity>
             </View>
-
+            )}
+            
             <Spacing vertical={5} />
 
-            <ScrollView style={styles.scrollView} horizontal={true} showsHorizontalScrollIndicator={false}>
+            <ScrollView style={styles.scrollView}  horizontal={true} showsHorizontalScrollIndicator={false}>
                 <Spacing horizontal={5} />
-                <View style={styles.list}>
+                <View style={listStyles}>
                     {content.map(item => renderItem(item))}
                 </View>
             </ScrollView>
@@ -56,7 +65,6 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         flexDirection: 'row',
         alignItems: 'flex-start',
-        flex: 1,
-        width: '100%',
+        minWidth: '100%',
     },
 });

@@ -21,7 +21,7 @@ const RootStack = () => {
     <Stack.Navigator>
       <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
       <Stack.Screen name="NewGame" component={NewGame} options={{ title: "Create New Game"}}/>
-      <Stack.Screen name="ActiveGame" component={ActiveGame} options={{title: "Update Game"}} />
+      <Stack.Screen name="ActiveGame" component={ActiveGame} options={({ route }) => ({title: route.params.game.name})} />
     </Stack.Navigator>
   );
 };

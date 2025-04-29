@@ -21,11 +21,15 @@ import { createGameDocument } from "../services/game";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../App";
+import { parseDateToString } from "../utils/date";
 
 export const NewGame = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const { allPlayers, refreshPlayers, allFolders, refreshFolders, allTags, refreshTags } = useGameContext();
-    const [gameName, setGameName] = useState('');
+
+    const todayDate = parseDateToString(Date.now())
+
+    const [gameName, setGameName] = useState(`New Game - ${todayDate}`);
     const [playerModalVisible, setPlayerModalVisible] = useState(false);
     const [folderModalVisible, setFolderModalVisible] = useState(false);
     const [tagModalVisible, setTagModalVisible] = useState(false);
@@ -72,6 +76,7 @@ export const NewGame = () => {
     const addGame = async () => {
         const gamePlayers: GamePlayer[] = selectedPlayers.map(player => ({
             id: player.id,
+            name: player.name,
             totalPoints: 0,
             roundPoints: 0,
         })) 

@@ -1,5 +1,5 @@
 import { firestore } from "../../firebaseConfig";
-import { doc, setDoc } from "firebase/firestore"
+import { doc, setDoc, updateDoc } from "firebase/firestore"
 
 export const createDocumentWithId = async (
     path: string,
@@ -18,4 +18,14 @@ export const createDocumentWithId = async (
       } catch (error) {
         console.error("Error writing document: ", error);
       }
+};
+
+export const updateDocument = async (path: string, id: string, data: object) => {
+  try {
+    const docRef = doc(firestore, path, id);
+    await updateDoc(docRef, data);
+    console.log("Document successfully updated!");
+  } catch (error) {
+    console.error("Error updating document:", error);
+  }
 };

@@ -6,6 +6,7 @@ of that player connected to the game to keep track of game-specific info
 */
 export type GamePlayer = {
     id: string; // this should be the same as the global player
+    name: string;
     totalPoints: number;
     roundPoints: number;
 };
@@ -14,6 +15,7 @@ export type Round = {
     id: string;
     players: GamePlayer[]
     points: number;
+    dateAdded: number;
 };
 
 export type Game = {

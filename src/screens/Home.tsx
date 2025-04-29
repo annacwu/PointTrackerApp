@@ -62,21 +62,24 @@ export const Home = () => {
                 content={activeGames}
                 renderItem={(game) => (
                     <InfoPreviewBlock key={game.id} child={<Text>{game.name}</Text>} onPress={() => moveToActiveGameScreen(game)}/>
-                )}/>
+                )}
+                heading={true}/>
             </View>
             <View style={styles.rowsContainer}>
                 <RowContainer label={'Players'} 
                 content={allPlayers}
                 renderItem={(player) => (
                     <InfoPreviewBlock key={player.id} child={<Text>{player.name}</Text>} onPress={() => moveToPlayersScreen}/>
-                )}/>
+                )}
+                heading={true}/>
             </View>
             <View style={styles.rowsContainer}>
                 <RowContainer label={'All Games'} 
                 content={allGames}
                 renderItem={(game) => (
                     <InfoPreviewBlock key={game.id} child={<Text>{game.name}</Text>} onPress={() => moveToAllGamesScreen}/>
-                )}/>
+                )}
+                heading={true}/>
             </View>
             
             <AddPlayerModal 
