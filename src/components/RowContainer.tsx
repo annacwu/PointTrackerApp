@@ -22,13 +22,12 @@ export const RowContainer = <T,>(props: RowContainerProps<T>) => {
         <View style={styles.container}>
             {heading && (
                 <View style={styles.heading}>
-                <Spacing horizontal={5} />
-                <Text style={styles.label}>{label}</Text>
-                <Spacing horizontal={5} />
-                <TouchableOpacity>
-                    <Text>See All</Text>
-                </TouchableOpacity>
-            </View>
+                    <Text style={styles.label}>{label}</Text>
+                    <Spacing horizontal={5} />
+                    <TouchableOpacity style={styles.seeButton}>
+                        <Text>See All</Text>
+                    </TouchableOpacity>
+                </View>
             )}
             
             <Spacing vertical={5} />
@@ -51,9 +50,11 @@ const styles = StyleSheet.create({
     heading: {
         flexDirection: 'row',
         alignItems: 'baseline',
+        justifyContent: 'space-between',
         height: '20%',
     },
     label: {
+        marginLeft: 10,
         fontSize: 30,
         color: 'black',
     },
@@ -66,5 +67,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'flex-start',
         minWidth: '100%',
+    },
+    seeButton: {
+        margin: 10,
     },
 });
