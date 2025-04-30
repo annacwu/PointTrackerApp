@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 import { RootStackParamList } from "../../App";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Spacing } from "../components/Spacing";
@@ -9,6 +9,7 @@ import { BORDER_LIGHT_GREY } from "../utils/colors";
 import { RowContainer } from "../components/RowContainer";
 import { updateDocument } from "../firestore/DocumentMutator";
 import { useGameContext } from "../contexts/GameContext";
+import { PointsTable } from "../components/PointsTable";
 
 export type ActiveGameProps = NativeStackScreenProps<RootStackParamList, 'ActiveGame'>;
 
@@ -19,10 +20,15 @@ export const ActiveGame = ({ route }: ActiveGameProps) => {
     const [avgPoints, setAvgPoints] = useState<number[]>([]);
 
     const addRound = async () => {
+        const points: Record<string, number> = {};
+        game.players.forEach(player => {
+            points[player.id] = 0;
+        });
+
         const newRound: Round = {
             id: generateFirebaseId(`${FIREBASE_COLLECTIONS.GAME}/${game.id}/rounds`),
             players: game.players,
-            points: 0,
+            points: points,
             dateAdded: Date.now()
         }
 
@@ -36,6 +42,10 @@ export const ActiveGame = ({ route }: ActiveGameProps) => {
     };
 
     const moveToPlayersScreen = () => {
+
+    };
+
+    const handleEditPress = () => {
 
     };
 
@@ -63,7 +73,7 @@ export const ActiveGame = ({ route }: ActiveGameProps) => {
     useEffect(() => {
         calculateAverages();
     }, [game]); 
-    // whenever game updates, recalculate
+    // whenever game updates, recalculate NOT WORKING?
 
     return (
         <View style={styles.container}>
@@ -88,17 +98,20 @@ export const ActiveGame = ({ route }: ActiveGameProps) => {
                 />
             </View>
 
-            {/* List of rounds played with points per round */}
+            {/* List of rounds played with points per round 
+            TODO: make whole thing a horizontal scrollview, each column should be a player view 
+            with their points. add side players/round number column?
+            */}
             <View style={styles.rounds}>
                 <View style={styles.sectionTitle}>
                     <Text style={styles.label}>
                         Rounds
                     </Text> 
                     <TouchableOpacity style={styles.newRound} onPress={addRound}>
-                        <Text style={styles.smallText}>+</Text>
+                        <Text style={styles.smallText}>+ Add Round</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={styles.table}>
+                {/* <View style={styles.table}>
                     <View style={styles.horizontal}>
                       {game.players.map(player => 
                         <Text key={player.id}>{player.name}</Text>
@@ -110,11 +123,20 @@ export const ActiveGame = ({ route }: ActiveGameProps) => {
                     <ScrollView contentContainerStyle={styles.roundDisplay} >
                       {game.rounds.map(round => 
                         <View key={round.id} style={styles.horizontal}>{round.players.map(player =>
-                            <Text key={player.id}>{player.roundPoints}</Text>
+                            <Text key={player.id}>pts</Text>
                         )}</View>
                         )}  
-                    </ScrollView>
-
+                        <TouchableOpacity onPress={handleEditPress}>
+                            <Image source={require('../../assets/edit.png')} style={styles.editImage} />
+                        </TouchableOpacity>
+                    </ScrollView> */}
+                    <View style={styles.table}>
+                        <PointsTable 
+                    players={game.players}
+                    rounds={game.rounds}
+                    onEdit={handleEditPress} />
+                    </View>
+                    
                     {/* average points separator */}
                     <View style={styles.separator} /> 
 
@@ -122,11 +144,10 @@ export const ActiveGame = ({ route }: ActiveGameProps) => {
                       {avgPoints.map((points, index) => 
                         <Text key={index}>{points}</Text>
                         )}  
+                        
                     </View> 
                 </View>
             </View>
-
-        </View>
     );
 };
 
@@ -176,11 +197,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     newRound: {
-        backgroundColor: 'pink',
+        // backgroundColor: 'pink',
         margin: 5,
-        width: 30,
+        width: 100,
         height: 20,
         borderRadius: 10,
+        borderWidth: 1,
         justifyContent: 'center',
         alignItems: 'center', 
     },
@@ -193,7 +215,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     table: {
-        backgroundColor: 'white',
+        backgroundColor: 'red',
         flex: 1,
         margin: 5,
         borderRadius: 15,
@@ -206,5 +228,9 @@ const styles = StyleSheet.create({
     roundDisplay: {},
     roundInfo: {
         justifyContent: 'space-evenly',
-    }
+    },
+    editImage: {
+        height: 20,
+        width: 20,
+    },
 });

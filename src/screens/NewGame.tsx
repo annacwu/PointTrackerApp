@@ -78,7 +78,6 @@ export const NewGame = () => {
             id: player.id,
             name: player.name,
             totalPoints: 0,
-            roundPoints: 0,
         })) 
 
         console.log(`players: ${selectedPlayers}, folder: ${selectedFolder}, tags: ${selectedTags}`);

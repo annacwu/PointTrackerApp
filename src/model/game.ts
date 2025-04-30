@@ -8,13 +8,12 @@ export type GamePlayer = {
     id: string; // this should be the same as the global player
     name: string;
     totalPoints: number;
-    roundPoints: number;
 };
 
 export type Round = {
     id: string;
     players: GamePlayer[]
-    points: number;
+    points: Record<string, number>;
     dateAdded: number;
 };
 
