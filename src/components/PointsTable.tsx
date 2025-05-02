@@ -7,7 +7,7 @@ import { Spacing } from "./Spacing";
 type PointsTableProps = {
     players: GamePlayer[];  
     rounds: Round[];
-    onEdit: () => void;
+    onEdit: (round: Round) => void;
     averages: number[];
 };
 
@@ -33,7 +33,7 @@ export const PointsTable = (props: PointsTableProps) => {
                         {rounds.map((round, index) => (
                         <View key={round.id} style={styles.roundRow}>
                             {/* Round label */}
-                            <TouchableOpacity onPress={() => onEdit()}>
+                            <TouchableOpacity onPress={() => onEdit(round)}>
                                 <Text style={styles.roundButton}>R{index + 1}</Text>
                             </TouchableOpacity>
                             
@@ -44,12 +44,6 @@ export const PointsTable = (props: PointsTableProps) => {
                                 {round.points[player.id] ?? 0}
                             </Text>
                             ))}
-
-
-                            {/* Edit button
-                            <TouchableOpacity onPress={() => onEdit()}>
-                                <Image source={require('../../assets/edit.png')} style={styles.editImage} />
-                            </TouchableOpacity> */}
                         </View>
                         ))}
                     </ScrollView>

@@ -1,16 +1,22 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 
 type SubmitButtonProps = {
     child: JSX.Element;
     onPress: () => void;
+    customStyles?: ViewStyle;
 };
 
 export const SubmitButton = (props: SubmitButtonProps) => {
-    const { child, onPress } = props;
+    const { child, onPress, customStyles={} } = props;
+
+    const buttonStyles: ViewStyle = {
+        ...styles.button,
+        ...customStyles,
+    };
 
     return (
-        <TouchableOpacity onPress={onPress} style={styles.button}>
+        <TouchableOpacity onPress={onPress} style={buttonStyles}>
             {child}
         </TouchableOpacity>
     );
@@ -19,8 +25,8 @@ export const SubmitButton = (props: SubmitButtonProps) => {
 const styles = StyleSheet.create({
     button: {
         marginTop: 15,
-        width: '100%',
         height: 40,
+        width: '100%',
         borderRadius: 8,
         backgroundColor: 'pink',
         alignItems: 'center',

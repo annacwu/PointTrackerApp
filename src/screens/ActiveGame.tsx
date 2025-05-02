@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { RootStackParamList } from "../../App";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Spacing } from "../components/Spacing";
 import { Round } from "../model/game";
 import { FIREBASE_COLLECTIONS, generateFirebaseId } from "../firestore/utils";
-import { BORDER_LIGHT_GREY } from "../utils/colors";
 import { RowContainer } from "../components/RowContainer";
 import { updateDocument } from "../firestore/DocumentMutator";
 import { useGameContext } from "../contexts/GameContext";
 import { PointsTable } from "../components/PointsTable";
+import { EditRoundModal } from "../components/EditRoundModal";
 
 export type ActiveGameProps = NativeStackScreenProps<RootStackParamList, 'ActiveGame'>;
 
@@ -18,6 +18,20 @@ export const ActiveGame = ({ route }: ActiveGameProps) => {
     const {allGames, refreshGames} = useGameContext();
     const [game, setGame] = useState(initialGame);
     const [avgPoints, setAvgPoints] = useState<number[]>([]);
+    const [roundModalVisible, setRoundModalVisible] = useState(false);
+    const [currentRound, setCurrentRound] = useState<Round>(game.rounds[0]);
+
+    useEffect(() => {
+        const updatedGame = allGames.find(g => g.id === game.id);
+        if (updatedGame) {
+            setGame(updatedGame);
+        }
+    }, [allGames]);
+
+    // check this might not be working
+    useEffect(() => {
+        calculateAverages();
+    }, [roundModalVisible]); 
 
     const addRound = async () => {
         const points: Record<string, number> = {};
@@ -41,12 +55,21 @@ export const ActiveGame = ({ route }: ActiveGameProps) => {
         refreshGames();
     };
 
-    const moveToPlayersScreen = () => {
-
+    const saveRoundChanges = async (roundId: string, updatedPoints: Record<string, number>) => {
+        const updatedRounds = game.rounds.map(r =>
+            r.id === roundId ? { ...r, points: updatedPoints } : r
+        );
+        await updateDocument(FIREBASE_COLLECTIONS.GAME, game.id, { rounds: updatedRounds });
+        refreshGames();
     };
 
-    const handleEditPress = () => {
-        console.log('pressed edit');
+    const openRoundModal = (round: Round) => {
+        setCurrentRound(round)
+        setRoundModalVisible(true);
+    };
+
+    const moveToPlayersScreen = () => {
+
     };
 
     const calculateAverages = () => {
@@ -63,20 +86,16 @@ export const ActiveGame = ({ route }: ActiveGameProps) => {
         setAvgPoints(points);
     };
 
-    useEffect(() => {
-        const updatedGame = allGames.find(g => g.id === game.id);
-        if (updatedGame) {
-            setGame(updatedGame);
-        }
-    }, [allGames]);
-
-    useEffect(() => {
-        calculateAverages();
-    }, [game]); 
-    // whenever game updates, recalculate NOT WORKING?
-
     return (
         <View style={styles.container}>
+
+            <EditRoundModal 
+                modalVisible={roundModalVisible}
+                setModalVisible={setRoundModalVisible}
+                round={currentRound}
+                onSave={(roundID, updatedPoints: Record<string, number>) => saveRoundChanges(roundID, updatedPoints)}
+            />
+
             {/* Header with total player points for the game */}
             <View style={styles.header}> 
                 <RowContainer label={'Total Points'} 
@@ -104,7 +123,7 @@ export const ActiveGame = ({ route }: ActiveGameProps) => {
                 {/* Round Header */}
                 <View style={styles.sectionTitle}>
                     <Text style={styles.label}>Rounds</Text> 
-                    <TouchableOpacity style={styles.newRound} onPress={addRound}>
+                    <TouchableOpacity style={styles.newRound} onPress={() => addRound()}>
                         <Text style={styles.smallText}>+ Add Round</Text>
                     </TouchableOpacity>
                 </View>
@@ -114,7 +133,7 @@ export const ActiveGame = ({ route }: ActiveGameProps) => {
                     <PointsTable 
                     players={game.players}
                     rounds={game.rounds}
-                    onEdit={handleEditPress} 
+                    onEdit={openRoundModal} 
                     averages={avgPoints}/>
                 </View>
                 

@@ -15,7 +15,7 @@ export const ButtonText = (props: Props) => {
 
 const styles = StyleSheet.create({
     label: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 600,
         color: 'black',
     },
