@@ -4,10 +4,10 @@ import { getAllDocumentsWithPath } from "../firestore/DocumentRetriever";
 import { Tag } from "../model/tag";
 
 export const createTagDocument = async (tag: Tag) => {
-    await createDocumentWithId(FIREBASE_COLLECTIONS.TAG, tag.id, tag,);
+  await createDocumentWithId(FIREBASE_COLLECTIONS.TAG, tag.id, tag);
 };
 
 export const getAllTags = async () => {
-    const resp = await getAllDocumentsWithPath(FIREBASE_COLLECTIONS.TAG);
-    return resp as Tag[];
+  const resp = await getAllDocumentsWithPath(FIREBASE_COLLECTIONS.TAG);
+  return resp as Tag[];
 };

@@ -10,87 +10,84 @@ import { Folder } from "../model/folder";
 import { createFolderDocument } from "../services/folder";
 
 type AddFolderModalProps = {
-    modalVisible: boolean;
-    setModalVisible: (visible: boolean) => void;
+  modalVisible: boolean;
+  setModalVisible: (visible: boolean) => void;
 };
 
 export const AddFolderModal = (props: AddFolderModalProps) => {
-    const { modalVisible, setModalVisible } = props;
-    const [folderName, setFolderName] = useState('');
+  const { modalVisible, setModalVisible } = props;
+  const [folderName, setFolderName] = useState("");
 
-    const closeModal = () => {
-        setModalVisible(false);
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const addFolder = async () => {
+    const id = generateFirebaseId(FIREBASE_COLLECTIONS.FOLDER);
+
+    const newFolder: Folder = {
+      id,
+      name: folderName,
+      games: [],
     };
 
-    const addFolder = async () => {
-        const id = generateFirebaseId(FIREBASE_COLLECTIONS.FOLDER);
+    await createFolderDocument(newFolder);
+    setFolderName("");
+    setModalVisible(false); // later i could change this to some onError/onSuccess condition
+  };
 
-        const newFolder: Folder = {
-            id,
-            name: folderName,
-            games: [],
-        };
+  return (
+    <Modal visible={modalVisible} animationType="slide" transparent={true}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.centeredView}>
+          <View style={styles.content}>
+            <CloseButton onPress={closeModal} />
 
-        await createFolderDocument(newFolder);
-        setFolderName('');
-        setModalVisible(false); // later i could change this to some onError/onSuccess condition
-    };
+            <Text style={styles.label}> Folder Name: </Text>
 
-    return (
-        <Modal 
-        visible={modalVisible} 
-        animationType="slide" 
-        transparent={true}
-        >
-            <SafeAreaView style={{flex: 1}}>
-                <View style={styles.centeredView}>
-                    <View style={styles.content}>
-                        <CloseButton onPress={closeModal}/>
+            <InputData
+              value={folderName}
+              onChangeText={(text) => setFolderName(text)}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
 
-                        <Text style={styles.label}> Folder Name: </Text>
-
-                        <InputData 
-                        value={folderName}
-                        onChangeText={(text) => setFolderName(text)}
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        />
-
-                       <SubmitButton child={<ButtonText text={'Add Folder'}/>} onPress={addFolder} /> 
-                    </View>
-                </View>
-                
-            </SafeAreaView>
-        </Modal>
-        
-    );
+            <SubmitButton
+              child={<ButtonText text={"Add Folder"} />}
+              onPress={addFolder}
+            />
+          </View>
+        </View>
+      </SafeAreaView>
+    </Modal>
+  );
 };
 
 const styles = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  content: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    height: 180,
+    width: 300,
+    padding: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
     },
-    content: {
-        margin: 20,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        height: 180,
-        width: 300,
-        padding: 10,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 4,
-          elevation: 5,
-    },
-    label: {
-        marginTop: 15,
-        fontSize: 16,
-        fontWeight: 600,
-    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  label: {
+    marginTop: 15,
+    fontSize: 16,
+    fontWeight: 600,
+  },
 });

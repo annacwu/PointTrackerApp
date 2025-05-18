@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { MultiSelect } from 'react-native-element-dropdown';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { MultiDropdownProps } from '../model/dropdown';
-
+import { StyleSheet, View } from "react-native";
+import { MultiSelect } from "react-native-element-dropdown";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { MultiDropdownProps } from "../model/dropdown";
 
 const MultiDropdown = (props: MultiDropdownProps) => {
   const { itemName, data, selected, setSelected } = props;
@@ -46,8 +44,8 @@ const styles = StyleSheet.create({
   container: { padding: 16 },
   dropdown: {
     height: 50,
-    backgroundColor: 'transparent',
-    borderBottomColor: 'gray',
+    backgroundColor: "transparent",
+    borderBottomColor: "gray",
     borderBottomWidth: 0.5,
   },
   placeholderStyle: {

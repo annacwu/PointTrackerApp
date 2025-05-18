@@ -11,91 +11,88 @@ import { createTagDocument } from "../services/tag";
 import { ColorsInput } from "./ColorsInput";
 
 type AddTagModalProps = {
-    modalVisible: boolean;
-    setModalVisible: (visible: boolean) => void;
+  modalVisible: boolean;
+  setModalVisible: (visible: boolean) => void;
 };
 
 export const AddTagModal = (props: AddTagModalProps) => {
-    const { modalVisible, setModalVisible } = props;
-    const [tagName, setTagName] = useState('');
-    const [tagColor, setTagColor] = useState('');
+  const { modalVisible, setModalVisible } = props;
+  const [tagName, setTagName] = useState("");
+  const [tagColor, setTagColor] = useState("");
 
-    const closeModal = () => {
-        setModalVisible(false);
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const addTag = async () => {
+    const id = generateFirebaseId(FIREBASE_COLLECTIONS.TAG);
+
+    const newTag: Tag = {
+      id,
+      name: tagName,
+      color: tagColor,
     };
 
-    const addTag = async () => {
-        const id = generateFirebaseId(FIREBASE_COLLECTIONS.TAG);
+    await createTagDocument(newTag);
+    setTagName("");
+    setModalVisible(false); // later i could change this to some onError/onSuccess condition
+  };
 
-        const newTag: Tag = {
-            id,
-            name: tagName,
-            color: tagColor,
-        };
+  return (
+    <Modal visible={modalVisible} animationType="slide" transparent={true}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.centeredView}>
+          <View style={styles.content}>
+            <CloseButton onPress={closeModal} />
 
-        await createTagDocument(newTag);
-        setTagName('');
-        setModalVisible(false); // later i could change this to some onError/onSuccess condition
-    };
+            <Text style={styles.label}> Tag Name: </Text>
 
-    return (
-        <Modal 
-        visible={modalVisible} 
-        animationType="slide" 
-        transparent={true}
-        >
-            <SafeAreaView style={{flex: 1}}>
-                <View style={styles.centeredView}>
-                    <View style={styles.content}>
-                        <CloseButton onPress={closeModal}/>
+            <InputData
+              value={tagName}
+              onChangeText={(text) => setTagName(text)}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
 
-                        <Text style={styles.label}> Tag Name: </Text>
+            <Text style={styles.label}> Tag Color: </Text>
+            <ColorsInput itemColor={tagColor} setItemColor={setTagColor} />
 
-                        <InputData 
-                        value={tagName}
-                        onChangeText={(text) => setTagName(text)}
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        />
-
-                        <Text style={styles.label}> Tag Color: </Text>
-                        <ColorsInput itemColor={tagColor} setItemColor={setTagColor} />
-
-                       <SubmitButton child={<ButtonText text={'Add Tag'}/>} onPress={addTag} /> 
-                    </View>
-                </View>
-                
-            </SafeAreaView>
-        </Modal>
-        
-    );
+            <SubmitButton
+              child={<ButtonText text={"Add Tag"} />}
+              onPress={addTag}
+            />
+          </View>
+        </View>
+      </SafeAreaView>
+    </Modal>
+  );
 };
 
 const styles = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  content: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    height: 280,
+    width: 300,
+    padding: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
     },
-    content: {
-        margin: 20,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        height: 280,
-        width: 300,
-        padding: 10,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-          },
-          shadowOpacity: 0.25,
-          shadowRadius: 4,
-          elevation: 5,
-    },
-    label: {
-        marginTop: 15,
-        fontSize: 16,
-        fontWeight: 600,
-    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  label: {
+    marginTop: 15,
+    fontSize: 16,
+    fontWeight: 600,
+  },
 });
