@@ -8,6 +8,5 @@ export const createGameDocument = async (game: Game) => {
 };
 
 export const getAllGames = async () => {
-  const resp = await getAllDocumentsWithPath(FIREBASE_COLLECTIONS.GAME);
-  return resp as Game[];
+  return await getAllDocumentsWithPath<Game>(FIREBASE_COLLECTIONS.GAME);
 };

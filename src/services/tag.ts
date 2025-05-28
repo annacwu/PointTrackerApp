@@ -8,6 +8,5 @@ export const createTagDocument = async (tag: Tag) => {
 };
 
 export const getAllTags = async () => {
-  const resp = await getAllDocumentsWithPath(FIREBASE_COLLECTIONS.TAG);
-  return resp as Tag[];
+  return await getAllDocumentsWithPath<Tag>(FIREBASE_COLLECTIONS.TAG);
 };

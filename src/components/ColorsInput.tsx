@@ -1,10 +1,6 @@
 import React, { useEffect } from "react";
 import { StyleSheet, TouchableOpacity, ScrollView, View } from "react-native";
-import {
-  TAG_GREEN,
-  TAG_BLUE,
-  TAG_PURPLE,
-} from "../utils/colors";
+import { TAG_GREEN, TAG_BLUE, TAG_PURPLE } from "../utils/colors";
 
 type ColorInputProps = {
   itemColor: string;

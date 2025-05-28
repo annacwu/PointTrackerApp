@@ -13,7 +13,6 @@ import MultiDropdown from "../components/MultiDropdown";
 import { DropdownOption } from "../model/dropdown";
 import { useGameContext } from "../contexts/GameContext";
 import { Spacing } from "../components/Spacing";
-import { AddPlayerModal } from "../components/AddPlayerModal";
 import { AddFolderModal } from "../components/AddFolderModal";
 import SingleDropdown from "../components/SingleDropdown";
 import { AddTagModal } from "../components/AddTagModal";
@@ -22,7 +21,6 @@ import ButtonMultiselect, {
   ButtonLayout,
 } from "react-native-button-multiselect";
 import { Game, GamePlayer, POINT_TYPES } from "../model/game";
-import { Player } from "../model/player";
 import { Tag } from "../model/tag";
 import { Folder } from "../model/folder";
 import { createGameDocument } from "../services/game";
@@ -30,36 +28,26 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../App";
 import { parseDateToString } from "../utils/date";
+import { PlayerSelection } from "../components/PlayerSelection";
+import { usePlayerContext } from "../contexts/PlayerContext";
 
 export const NewGame = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const {
-    allPlayers,
-    refreshPlayers,
-    allFolders,
-    refreshFolders,
-    allTags,
-    refreshTags,
-  } = useGameContext();
+  const { allFolders, refreshFolders, allTags, refreshTags } = useGameContext();
+  const { selectedPlayers, setSelectedPlayers } = usePlayerContext();
 
   const todayDate = parseDateToString(Date.now());
 
   const [gameName, setGameName] = useState(`New Game - ${todayDate}`);
-  const [playerModalVisible, setPlayerModalVisible] = useState(false);
   const [folderModalVisible, setFolderModalVisible] = useState(false);
   const [tagModalVisible, setTagModalVisible] = useState(false);
   const [pointType, setPointType] = useState(POINT_TYPES.MOST);
 
-  const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<Folder>();
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   // useEffects so that the new items are available right after added
-  useEffect(() => {
-    refreshPlayers();
-  }, [playerModalVisible]);
-
   useEffect(() => {
     refreshFolders();
   }, [folderModalVisible]);
@@ -67,12 +55,6 @@ export const NewGame = () => {
   useEffect(() => {
     refreshTags();
   }, [tagModalVisible]);
-
-  // turn into data to be shown in the dropdown
-  const playerOptions: DropdownOption[] = allPlayers.map((player) => ({
-    label: player.name,
-    value: player,
-  }));
 
   const folderOptions: DropdownOption[] = allFolders.map((folder) => ({
     label: folder.name,
@@ -96,10 +78,6 @@ export const NewGame = () => {
       totalPoints: 0,
     }));
 
-    console.log(
-      `players: ${selectedPlayers}, folder: ${selectedFolder}, tags: ${selectedTags}`,
-    );
-
     const newGame: Game = {
       id: generateFirebaseId(FIREBASE_COLLECTIONS.GAME),
       name: gameName,
@@ -111,6 +89,7 @@ export const NewGame = () => {
       dateStarted: Date.now(),
     };
 
+    // FIXME: this is not working now
     if (selectedFolder !== undefined) {
       selectedFolder.games.push(newGame);
     }
@@ -124,10 +103,6 @@ export const NewGame = () => {
     navigation.navigate("Home");
   };
 
-  const openAddPlayerModal = () => {
-    setPlayerModalVisible(true);
-  };
-
   const openAddFolderModal = () => {
     setFolderModalVisible(true);
   };
@@ -139,11 +114,6 @@ export const NewGame = () => {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <AddPlayerModal
-          modalVisible={playerModalVisible}
-          setModalVisible={setPlayerModalVisible}
-        />
-
         <AddFolderModal
           modalVisible={folderModalVisible}
           setModalVisible={setFolderModalVisible}
@@ -164,22 +134,7 @@ export const NewGame = () => {
         />
 
         <Spacing vertical={5} />
-        <View style={styles.horizontal}>
-          <Text style={styles.label}>Players</Text>
-          <Spacing horizontal={5} />
-          <TouchableOpacity
-            style={styles.plusButton}
-            onPress={openAddPlayerModal}
-          >
-            <Text style={{ fontSize: 16 }}>+</Text>
-          </TouchableOpacity>
-        </View>
-        <MultiDropdown
-          itemName="players"
-          data={playerOptions}
-          selected={selectedPlayers}
-          setSelected={setSelectedPlayers}
-        />
+        <PlayerSelection />
 
         <Spacing vertical={5} />
         <View style={styles.horizontal}>

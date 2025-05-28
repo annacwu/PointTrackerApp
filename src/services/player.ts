@@ -8,6 +8,5 @@ export const createPlayerDocument = async (player: Player) => {
 };
 
 export const getAllPlayers = async () => {
-  const resp = await getAllDocumentsWithPath(FIREBASE_COLLECTIONS.PLAYER);
-  return resp as Player[];
+  return await getAllDocumentsWithPath<Player>(FIREBASE_COLLECTIONS.PLAYER);
 };

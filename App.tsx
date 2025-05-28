@@ -4,9 +4,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Home } from "./src/screens/Home";
 import { NewGame } from "./src/screens/NewGame";
-import { GameProvider } from "./src/contexts/GameContext";
 import { ActiveGame } from "./src/screens/ActiveGame";
 import { Game } from "./src/model/game";
+import { AppProviders } from "./src/contexts/AppProviders";
 
 export type RootStackParamList = {
   Home: undefined;
@@ -40,7 +40,7 @@ const RootStack = () => {
 
 export default function App() {
   return (
-    <GameProvider>
+    <AppProviders>
       <SafeAreaProvider>
         <SafeAreaView style={styles.container} edges={["top"]}>
           <NavigationContainer>
@@ -48,7 +48,7 @@ export default function App() {
           </NavigationContainer>
         </SafeAreaView>
       </SafeAreaProvider>
-    </GameProvider>
+    </AppProviders>
   );
 }
 

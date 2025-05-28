@@ -8,6 +8,5 @@ export const createFolderDocument = async (folder: Folder) => {
 };
 
 export const getAllFolders = async () => {
-  const resp = await getAllDocumentsWithPath(FIREBASE_COLLECTIONS.FOLDER);
-  return resp as Folder[];
+  return await getAllDocumentsWithPath<Folder>(FIREBASE_COLLECTIONS.FOLDER);
 };

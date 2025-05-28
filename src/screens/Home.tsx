@@ -16,12 +16,13 @@ import { Menu } from "../components/Menu";
 import { useGameContext } from "../contexts/GameContext";
 import { RootStackParamList } from "../../App";
 import { Game } from "../model/game";
+import { usePlayerContext } from "../contexts/PlayerContext";
 
 export const Home = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { allPlayers, refreshPlayers, allGames, refreshGames } =
-    useGameContext();
+  const { allGames, refreshGames } = useGameContext();
+  const { allPlayers, refreshPlayers } = usePlayerContext();
   const activeGames = allGames.filter((game) => game.active === true);
 
   const [playerModalVisible, setPlayerModalVisible] = useState(false);

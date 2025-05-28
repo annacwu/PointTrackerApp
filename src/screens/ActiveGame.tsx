@@ -76,7 +76,7 @@ export const ActiveGame = ({ route }: ActiveGameProps) => {
     setRoundModalVisible(true);
   };
 
-//   const moveToPlayersScreen = () => {};
+  //   const moveToPlayersScreen = () => {};
 
   const calculateAverages = () => {
     const points: number[] = [];

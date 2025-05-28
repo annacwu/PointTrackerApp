@@ -8,6 +8,7 @@ import { ButtonText } from "./ButtonText";
 import { FIREBASE_COLLECTIONS, generateFirebaseId } from "../firestore/utils";
 import { Player } from "../model/player";
 import { createPlayerDocument } from "../services/player";
+import { usePlayerContext } from "../contexts/PlayerContext";
 
 type AddPlayerModalProps = {
   modalVisible: boolean;
@@ -17,6 +18,7 @@ type AddPlayerModalProps = {
 export const AddPlayerModal = (props: AddPlayerModalProps) => {
   const { modalVisible, setModalVisible } = props;
   const [playerName, setPlayerName] = useState("");
+  const { refreshPlayers } = usePlayerContext();
 
   const closeModal = () => {
     setModalVisible(false);
@@ -34,6 +36,7 @@ export const AddPlayerModal = (props: AddPlayerModalProps) => {
 
     await createPlayerDocument(newPlayer);
     setPlayerName("");
+    refreshPlayers();
     setModalVisible(false); // later i could change this to some onError/onSuccess condition
   };
 
