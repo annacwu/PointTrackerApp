@@ -13,8 +13,6 @@ import MultiDropdown from "../components/MultiDropdown";
 import { DropdownOption } from "../model/dropdown";
 import { useGameContext } from "../contexts/GameContext";
 import { Spacing } from "../components/Spacing";
-import { AddFolderModal } from "../components/AddFolderModal";
-import SingleDropdown from "../components/SingleDropdown";
 import { AddTagModal } from "../components/AddTagModal";
 import { FIREBASE_COLLECTIONS, generateFirebaseId } from "../firestore/utils";
 import ButtonMultiselect, {
@@ -22,7 +20,6 @@ import ButtonMultiselect, {
 } from "react-native-button-multiselect";
 import { Game, GamePlayer, POINT_TYPES } from "../model/game";
 import { Tag } from "../model/tag";
-import { Folder } from "../model/folder";
 import { createGameDocument } from "../services/game";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -30,36 +27,28 @@ import { RootStackParamList } from "../../App";
 import { parseDateToString } from "../utils/date";
 import { PlayerSelection } from "../components/PlayerSelection";
 import { usePlayerContext } from "../contexts/PlayerContext";
+import { useFolderContext } from "../contexts/FolderContext";
+import { FolderSelection } from "../components/FolderSelection";
 
 export const NewGame = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { allFolders, refreshFolders, allTags, refreshTags } = useGameContext();
+  const { allTags, refreshTags } = useGameContext();
   const { selectedPlayers, setSelectedPlayers } = usePlayerContext();
+  const { selectedFolder, setSelectedFolder } = useFolderContext();
 
   const todayDate = parseDateToString(Date.now());
 
   const [gameName, setGameName] = useState(`New Game - ${todayDate}`);
-  const [folderModalVisible, setFolderModalVisible] = useState(false);
   const [tagModalVisible, setTagModalVisible] = useState(false);
   const [pointType, setPointType] = useState(POINT_TYPES.MOST);
 
-  const [selectedFolder, setSelectedFolder] = useState<Folder>();
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   // useEffects so that the new items are available right after added
   useEffect(() => {
-    refreshFolders();
-  }, [folderModalVisible]);
-
-  useEffect(() => {
     refreshTags();
   }, [tagModalVisible]);
-
-  const folderOptions: DropdownOption[] = allFolders.map((folder) => ({
-    label: folder.name,
-    value: folder,
-  }));
 
   const tagOptions: DropdownOption[] = allTags.map((tag) => ({
     label: tag.name,
@@ -103,9 +92,6 @@ export const NewGame = () => {
     navigation.navigate("Home");
   };
 
-  const openAddFolderModal = () => {
-    setFolderModalVisible(true);
-  };
 
   const openAddTagModal = () => {
     setTagModalVisible(true);
@@ -114,11 +100,6 @@ export const NewGame = () => {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <AddFolderModal
-          modalVisible={folderModalVisible}
-          setModalVisible={setFolderModalVisible}
-        />
-
         <AddTagModal
           modalVisible={tagModalVisible}
           setModalVisible={setTagModalVisible}
@@ -137,22 +118,7 @@ export const NewGame = () => {
         <PlayerSelection />
 
         <Spacing vertical={5} />
-        <View style={styles.horizontal}>
-          <Text style={styles.label}>Folder</Text>
-          <Spacing horizontal={5} />
-          <TouchableOpacity
-            style={styles.plusButton}
-            onPress={openAddFolderModal}
-          >
-            <Text style={{ fontSize: 16 }}>+</Text>
-          </TouchableOpacity>
-        </View>
-        <SingleDropdown
-          itemName="folder"
-          data={folderOptions}
-          selected={selectedFolder}
-          setSelected={setSelectedFolder}
-        />
+        <FolderSelection /> 
 
         <Spacing vertical={5} />
         <View style={styles.horizontal}>

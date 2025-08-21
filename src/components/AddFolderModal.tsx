@@ -8,6 +8,7 @@ import { ButtonText } from "./ButtonText";
 import { FIREBASE_COLLECTIONS, generateFirebaseId } from "../firestore/utils";
 import { Folder } from "../model/folder";
 import { createFolderDocument } from "../services/folder";
+import { useFolderContext } from "../contexts/FolderContext";
 
 type AddFolderModalProps = {
   modalVisible: boolean;
@@ -17,6 +18,7 @@ type AddFolderModalProps = {
 export const AddFolderModal = (props: AddFolderModalProps) => {
   const { modalVisible, setModalVisible } = props;
   const [folderName, setFolderName] = useState("");
+  const { refreshFolders } = useFolderContext();
 
   const closeModal = () => {
     setModalVisible(false);
@@ -32,6 +34,7 @@ export const AddFolderModal = (props: AddFolderModalProps) => {
     };
 
     await createFolderDocument(newFolder);
+    refreshFolders();
     setFolderName("");
     setModalVisible(false); // later i could change this to some onError/onSuccess condition
   };
